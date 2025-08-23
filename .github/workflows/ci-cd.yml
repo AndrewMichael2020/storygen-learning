@@ -35,7 +35,7 @@ jobs:
           echo "  Backend Service: $BACKEND_SERVICE_NAME"
           echo "  Frontend Service: $FRONTEND_SERVICE_NAME"
           echo "  Bucket: $BUCKET_NAME"
-          echo "  Secret: $SECRET_NAME"
+          echo "  Secret: $SECRET_MANAGER"
 
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
@@ -93,17 +93,17 @@ jobs:
       - name: Setup Secret Manager
         run: |
           echo "🔐 Setting up Secret Manager..."
-          if ! gcloud secrets describe ${{ env.SECRET_NAME }} \
+          if ! gcloud secrets describe ${{ env.SECRET_MANAGER }} \
                --project=${{ env.PROJECT_ID }} &>/dev/null; then
             echo "Creating secret for Google API key..."
-            gcloud secrets create ${{ env.SECRET_NAME }} \
+            gcloud secrets create ${{ env.SECRET_MANAGER }} \
               --replication-policy="automatic" \
               --project=${{ env.PROJECT_ID }}
             
             # Set the API key value from repository variables
             if [ -n "${{ vars.GOOGLE_API_KEY }}" ]; then
               echo "Setting API key value..."
-              echo -n "${{ vars.GOOGLE_API_KEY }}" | gcloud secrets versions add ${{ env.SECRET_NAME }} \
+              echo -n "${{ vars.GOOGLE_API_KEY }}" | gcloud secrets versions add ${{ env.SECRET_MANAGER }} \
                 --data-file=- \
                 --project=${{ env.PROJECT_ID }}
             else
@@ -114,7 +114,7 @@ jobs:
             # Update the secret value if provided
             if [ -n "${{ vars.GOOGLE_API_KEY }}" ]; then
               echo "Updating API key value..."
-              echo -n "${{ vars.GOOGLE_API_KEY }}" | gcloud secrets versions add ${{ env.SECRET_NAME }} \
+              echo -n "${{ vars.GOOGLE_API_KEY }}" | gcloud secrets versions add ${{ env.SECRET_MANAGER }} \
                 --data-file=- \
                 --project=${{ env.PROJECT_ID }}
             fi
@@ -177,7 +177,7 @@ jobs:
             --set-env-vars="GENMEDIA_BUCKET=${{ env.BUCKET_NAME }}" \
             --set-env-vars="GOOGLE_GENAI_USE_VERTEXAI=TRUE" \
             --set-env-vars="GOOGLE_CLOUD_REGION=${{ env.GCP_REGION }}" \
-            --set-secrets="GOOGLE_API_KEY=${{ env.SECRET_NAME }}:latest" \
+            --set-secrets="GOOGLE_API_KEY=${{ env.SECRET_MANAGER }}:latest" \
             --memory=${{ env.BACKEND_MEMORY }} \
             --cpu=${{ env.BACKEND_CPU }} \
             --min-instances=${{ env.MIN_INSTANCES }} \
@@ -348,7 +348,7 @@ jobs:
           echo "  Backend Service: ${{ env.BACKEND_SERVICE_NAME }}"
           echo "  Frontend Service: ${{ env.FRONTEND_SERVICE_NAME }}"
           echo "  Bucket: ${{ env.BUCKET_NAME }}"
-          echo "  Secret: ${{ env.SECRET_NAME }}"
+          echo "  Secret: ${{ env.SECRET_MANAGER }}"
           echo ""
           echo "📋 Service URLs:"
           echo "🔗 Backend:  ${{ needs.build-and-deploy-backend.outputs.backend-url }}"
