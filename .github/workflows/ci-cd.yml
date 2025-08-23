@@ -66,25 +66,25 @@ jobs:
         run: |
           echo "🏗️ Setting up Artifact Registry..."
           if ! gcloud artifacts repositories describe ${{ env.ARTIFACT_REPO }} \
-               --location=${{ env.REGION }} \
+               --location=${{ env.GCP_REGION }} \
                --project=${{ env.PROJECT_ID }} &>/dev/null; then
             echo "Creating Artifact Registry repository..."
             gcloud artifacts repositories create ${{ env.ARTIFACT_REPO }} \
               --repository-format=docker \
-              --location=${{ env.REGION }} \
+              --location=${{ env.GCP_REGION }} \
               --description="Docker repository for StoryGen application" \
               --project=${{ env.PROJECT_ID }}
           else
             echo "✅ Artifact Registry repository already exists"
           fi
-          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+          gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev
 
       - name: Setup Storage Bucket
         run: |
           echo "🪣 Setting up Storage Bucket..."
           if ! gsutil ls "gs://${{ env.BUCKET_NAME }}" &>/dev/null; then
             echo "Creating storage bucket..."
-            gsutil mb -p ${{ env.PROJECT_ID }} -l ${{ env.REGION }} "gs://${{ env.BUCKET_NAME }}"
+            gsutil mb -p ${{ env.PROJECT_ID }} -l ${{ env.GCP_REGION }} "gs://${{ env.BUCKET_NAME }}"
             gsutil iam ch allUsers:objectViewer "gs://${{ env.BUCKET_NAME }}"
           else
             echo "✅ Storage bucket already exists"
@@ -149,14 +149,14 @@ jobs:
           project_id: ${{ env.PROJECT_ID }}
 
       - name: Configure Docker for Artifact Registry
-        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+        run: gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev
 
       - name: Build and push backend Docker image
         run: |
           echo "🔨 Building backend Docker image..."
           cd 04b_Manual_Deployment_Done/backend
           gcloud builds submit \
-            --tag ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPO }}/${{ env.BACKEND_IMAGE_NAME }}:latest \
+            --tag ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPO }}/${{ env.BACKEND_IMAGE_NAME }}:latest \
             --project=${{ env.PROJECT_ID }}
           echo "✅ Backend image built and pushed successfully"
 
@@ -166,9 +166,9 @@ jobs:
           echo "📦 Deploying backend to Cloud Run..."
           
           gcloud run deploy ${{ env.BACKEND_SERVICE_NAME }} \
-            --image=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPO }}/${{ env.BACKEND_IMAGE_NAME }}:latest \
+            --image=${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPO }}/${{ env.BACKEND_IMAGE_NAME }}:latest \
             --platform=managed \
-            --region=${{ env.REGION }} \
+            --region=${{ env.GCP_REGION }} \
             --allow-unauthenticated \
             --port=8080 \
             --session-affinity \
@@ -176,7 +176,7 @@ jobs:
             --set-env-vars="GOOGLE_CLOUD_PROJECT_ID=${{ env.PROJECT_ID }}" \
             --set-env-vars="GENMEDIA_BUCKET=${{ env.BUCKET_NAME }}" \
             --set-env-vars="GOOGLE_GENAI_USE_VERTEXAI=TRUE" \
-            --set-env-vars="GOOGLE_CLOUD_REGION=${{ env.REGION }}" \
+            --set-env-vars="GOOGLE_CLOUD_REGION=${{ env.GCP_REGION }}" \
             --set-secrets="GOOGLE_API_KEY=${{ env.SECRET_NAME }}:latest" \
             --memory=${{ env.BACKEND_MEMORY }} \
             --cpu=${{ env.BACKEND_CPU }} \
@@ -186,7 +186,7 @@ jobs:
 
           BACKEND_URL=$(gcloud run services describe ${{ env.BACKEND_SERVICE_NAME }} \
             --platform=managed \
-            --region=${{ env.REGION }} \
+            --region=${{ env.GCP_REGION }} \
             --format="value(status.url)" \
             --project=${{ env.PROJECT_ID }})
 
@@ -223,7 +223,7 @@ jobs:
           project_id: ${{ env.PROJECT_ID }}
 
       - name: Configure Docker for Artifact Registry
-        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+        run: gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev
 
       - name: Build and push frontend Docker image
         run: |
@@ -238,7 +238,7 @@ jobs:
           EOF
           
           gcloud builds submit \
-            --tag ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPO }}/${{ env.FRONTEND_IMAGE_NAME }}:latest \
+            --tag ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPO }}/${{ env.FRONTEND_IMAGE_NAME }}:latest \
             --project=${{ env.PROJECT_ID }}
           echo "✅ Frontend image built and pushed successfully"
 
@@ -249,9 +249,9 @@ jobs:
           BACKEND_URL="${{ needs.build-and-deploy-backend.outputs.backend-url }}"
           
           gcloud run deploy ${{ env.FRONTEND_SERVICE_NAME }} \
-            --image=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPO }}/${{ env.FRONTEND_IMAGE_NAME }}:latest \
+            --image=${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPO }}/${{ env.FRONTEND_IMAGE_NAME }}:latest \
             --platform=managed \
-            --region=${{ env.REGION }} \
+            --region=${{ env.GCP_REGION }} \
             --allow-unauthenticated \
             --port=3000 \
             --set-env-vars="NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL" \
@@ -263,7 +263,7 @@ jobs:
 
           FRONTEND_URL=$(gcloud run services describe ${{ env.FRONTEND_SERVICE_NAME }} \
             --platform=managed \
-            --region=${{ env.REGION }} \
+            --region=${{ env.GCP_REGION }} \
             --format="value(status.url)" \
             --project=${{ env.PROJECT_ID }})
 
@@ -344,7 +344,7 @@ jobs:
           echo ""
           echo "📋 Configuration Used:"
           echo "  Project ID: ${{ env.PROJECT_ID }}"
-          echo "  Region: ${{ env.REGION }}"
+          echo "  Region: ${{ env.GCP_REGION }}"
           echo "  Backend Service: ${{ env.BACKEND_SERVICE_NAME }}"
           echo "  Frontend Service: ${{ env.FRONTEND_SERVICE_NAME }}"
           echo "  Bucket: ${{ env.BUCKET_NAME }}"
