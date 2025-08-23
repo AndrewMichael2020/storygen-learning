@@ -1,0 +1,17 @@
+name: "Load Deployment Config"
+description: "Load deployment.yml and export as environment variables"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Parse deployment.yml
+      shell: bash
+      run: |
+        echo "Loading .github/config/deployment.yml ..."
+        # Export each key/value in deployment.yml as env vars for the workflow
+        while IFS=": " read -r key value; do
+          if [[ "$key" =~ ^[a-zA-Z0-9_]+$ ]] && [[ -n "$value" ]]; then
+            key_upper=$(echo "$key" | tr '[:lower:]' '[:upper:]')
+            echo "$key_upper=$(echo $value | tr -d '"')" >> $GITHUB_ENV
+          fi
+        done < <(grep -E '^[a-zA-Z_]+:' .github/config/deployment.yml)
