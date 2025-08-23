@@ -1,0 +1,175 @@
+{
+  "eval_set_id": "story_agent_basic_generation_tests",
+  "name": "Story Agent Basic Generation Tests",
+  "description": "Unit tests for story_agent focusing on JSON structure compliance, scene generation, and keyword integration.",
+  "eval_cases": [
+    {
+      "invocation_id": "story-unit-test-1",
+      "session_input": {
+        "app_name": "story_agent",
+        "user_input": "A story about a lonely dragon."
+      },
+      "conversation": [
+        {
+          "invocation_id": "story-unit-test-1",
+          "user_content": "A story about a lonely dragon.",
+          "final_response": {
+            "story": "Ignis, the last dragon, lived in a high mountain cave, his loneliness a constant ache. He watched the world below, a silent, solitary guardian of a forgotten age.",
+            "main_characters": [
+              {
+                "name": "Ignis",
+                "description": "A massive dragon with scales the color of obsidian and eyes like molten gold. His wings are vast and leathery, and a plume of smoke often curls from his nostrils."
+              }
+            ],
+            "scenes": [
+              {
+                "index": 1,
+                "title": "The Solitary Peak",
+                "description": "Ignis watches the sunrise from his mountain home.",
+                "text": "From his perch, Ignis the dragon watched the sun paint the sky. He was utterly alone."
+              },
+              {
+                "index": 2,
+                "title": "A Faint Hope",
+                "description": "He sees a sign of another of his kind.",
+                "text": "One day, a glint of light from a distant peak caught his eye. Could it be another dragon?"
+              },
+              {
+                "index": 3,
+                "title": "The Long Journey",
+                "description": "Ignis decides to fly towards the distant light.",
+                "text": "Hope, a feeling long dormant, stirred in his chest. Ignis unfurled his mighty wings and took flight."
+              },
+              {
+                "index": 4,
+                "title": "A New Beginning",
+                "description": "He finds not another dragon, but a human who is not afraid.",
+                "text": "He found not a dragon, but a young girl who offered him a flower. Perhaps he wasn't so lonely after all."
+              }
+            ]
+          },
+          "tool_uses": []
+        }
+      ],
+      "expected_response": {
+        "story": "Ignis, the last dragon, lived in a high mountain cave, his loneliness a constant ache. He watched the world below, a silent, solitary guardian of a forgotten age.",
+        "main_characters": [
+          {
+            "name": "Ignis",
+            "description": "A massive dragon with scales the color of obsidian and eyes like molten gold. His wings are vast and leathery, and a plume of smoke often curls from his nostrils."
+          }
+        ],
+        "scenes": [
+          {
+            "index": 1,
+            "title": "The Solitary Peak",
+            "description": "Ignis watches the sunrise from his mountain home.",
+            "text": "From his perch, Ignis the dragon watched the sun paint the sky. He was utterly alone."
+          },
+          {
+            "index": 2,
+            "title": "A Faint Hope",
+            "description": "He sees a sign of another of his kind.",
+            "text": "One day, a glint of light from a distant peak caught his eye. Could it be another dragon?"
+          },
+          {
+            "index": 3,
+            "title": "The Long Journey",
+            "description": "Ignis decides to fly towards the distant light.",
+            "text": "Hope, a feeling long dormant, stirred in his chest. Ignis unfurled his mighty wings and took flight."
+          },
+          {
+            "index": 4,
+            "title": "A New Beginning",
+            "description": "He finds not another dragon, but a human who is not afraid.",
+            "text": "He found not a dragon, but a young girl who offered him a flower. Perhaps he wasn't so lonely after all."
+          }
+        ]
+      }
+    },
+    {
+      "invocation_id": "story-unit-test-2",
+      "session_input": {
+        "app_name": "story_agent",
+        "user_input": "Keywords: magic, castle, potion"
+      },
+      "conversation": [
+        {
+          "invocation_id": "story-unit-test-2",
+          "user_content": "Keywords: magic, castle, potion",
+          "final_response": {
+            "story": "In a grand castle, the clumsy apprentice wizard accidentally brewed a powerful shrinking potion. The magic was potent, and now he had to find a way to reverse it before the king returned.",
+            "main_characters": [
+              {
+                "name": "Milo",
+                "description": "A young wizard apprentice with messy hair, a perpetually ink-stained nose, and robes that are slightly too long for him."
+              }
+            ],
+            "scenes": [
+              {
+                "index": 1,
+                "title": "The Potion Mishap",
+                "description": "Milo mixes the wrong ingredients, creating a shrinking potion.",
+                "text": "Milo fumbled with his spellbook. A dash of griffin feather, a drop of morning dew... whoops. The potion in his cauldron bubbled violently, a testament to his clumsy magic."
+              },
+              {
+                "index": 2,
+                "title": "A Tiny Problem",
+                "description": "The potion spills and shrinks his master's favorite chair.",
+                "text": "The cauldron tipped, splashing the green potion onto the Grand Vizier's ornate chair. It shrunk to the size of a thimble. This was bad. The castle halls seemed to mock him."
+              },
+              {
+                "index": 3,
+                "title": "The Search for an Antidote",
+                "description": "He frantically searches the library for a counter-spell.",
+                "text": "He raced to the castle library, a place filled with ancient magic. He needed an antidote for his shrinking potion, and fast."
+              },
+              {
+                "index": 4,
+                "title": "A Lesson Learned",
+                "description": "He finds the cure just in time, learning a valuable lesson about paying attention.",
+                "text": "Just as the Grand Vizier returned, Milo found the counter-spell. With a flick of his wrist, the chair returned to its normal size. He had learned his lesson about the focus required for true magic."
+              }
+            ]
+          },
+          "tool_uses": []
+        }
+      ],
+      "expected_response": {
+        "story": "In a grand castle, the clumsy apprentice wizard accidentally brewed a powerful shrinking potion. The magic was potent, and now he had to find a way to reverse it before the king returned.",
+        "main_characters": [
+          {
+            "name": "Milo",
+            "description": "A young wizard apprentice with messy hair, a perpetually ink-stained nose, and robes that are slightly too long for him."
+          }
+        ],
+        "scenes": [
+          {
+            "index": 1,
+            "title": "The Potion Mishap",
+            "description": "Milo mixes the wrong ingredients, creating a shrinking potion.",
+            "text": "Milo fumbled with his spellbook. A dash of griffin feather, a drop of morning dew... whoops. The potion in his cauldron bubbled violently, a testament to his clumsy magic."
+          },
+          {
+            "index": 2,
+            "title": "A Tiny Problem",
+            "description": "The potion spills and shrinks his master's favorite chair.",
+            "text": "The cauldron tipped, splashing the green potion onto the Grand Vizier's ornate chair. It shrunk to the size of a thimble. This was bad. The castle halls seemed to mock him."
+          },
+          {
+            "index": 3,
+            "title": "The Search for an Antidote",
+            "description": "He frantically searches the library for a counter-spell.",
+            "text": "He raced to the castle library, a place filled with ancient magic. He needed an antidote for his shrinking potion, and fast."
+          },
+          {
+            "index": 4,
+            "title": "A Lesson Learned",
+            "description": "He finds the cure just in time, learning a valuable lesson about paying attention.",
+            "text": "Just as the Grand Vizier returned, Milo found the counter-spell. With a flick of his wrist, the chair returned to its normal size. He had learned his lesson about the focus required for true magic."
+          }
+        ]
+      }
+    }
+  ]
+}

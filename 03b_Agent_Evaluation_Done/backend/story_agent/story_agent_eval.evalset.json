@@ -1,0 +1,129 @@
+{
+  "eval_set_id": "story_agent_comprehensive_evalset",
+  "name": "Story Agent Comprehensive Evaluation Set",
+  "description": "Comprehensive evaluation scenarios for story_agent covering various keyword combinations, edge cases, and story quality metrics",
+  "eval_cases": [
+    {
+      "eval_id": "fantasy_adventure_session",
+      "conversation": [
+        {
+          "invocation_id": "fantasy-001",
+          "user_content": {
+            "parts": [
+              {
+                "text": "Keywords: brave knight, enchanted castle, magical sword"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "{\n  \"story\": \"Sir Aria stood before the towering enchanted castle, its spires twisted with ancient magic. She had come seeking the legendary magical sword that could save her village from the shadow curse. Inside the castle's glowing halls, she faced riddles posed by floating crystals that tested her courage and wisdom. When she proved her noble heart, the magical sword appeared in a burst of golden light, choosing her as its rightful wielder. Sir Aria returned home, the sword's power lifting the shadow curse and bringing joy back to her people.\",\n  \"main_characters\": [\n    {\n      \"name\": \"Sir Aria\",\n      \"description\": \"Young female knight with shoulder-length auburn hair in a practical braid, kind hazel eyes with determined expression, medium height and athletic build, wearing polished silver chainmail with blue tunic underneath, brown leather boots and gloves, carries a simple wooden shield with her family crest (a golden tree), has a confident posture but gentle smile\"\n    }\n  ],\n  \"scenes\": [\n    {\n      \"index\": 1,\n      \"title\": \"The Setup\",\n      \"description\": \"Standing before a towering enchanted castle with twisted magical spires, mystical atmosphere with glowing towers\",\n      \"text\": \"Sir Aria stood before the towering enchanted castle, its spires twisted with ancient magic. She had come seeking the legendary magical sword that could save her village from the shadow curse.\"\n    },\n    {\n      \"index\": 2,\n      \"title\": \"The Inciting Incident\",\n      \"description\": \"Inside glowing castle halls facing magical floating crystals that pose riddles and tests\",\n      \"text\": \"Inside the castle's glowing halls, she faced riddles posed by floating crystals that tested her courage and wisdom.\"\n    },\n    {\n      \"index\": 3,\n      \"title\": \"The Climax\",\n      \"description\": \"Magical sword appearing in burst of golden light, choosing its worthy wielder\",\n      \"text\": \"When she proved her noble heart, the magical sword appeared in a burst of golden light, choosing her as its rightful wielder.\"\n    },\n    {\n      \"index\": 4,\n      \"title\": \"The Resolution\",\n      \"description\": \"Returning to village, using sword's power to lift the shadow curse and restore joy\",\n      \"text\": \"Sir Aria returned home, the sword's power lifting the shadow curse and bringing joy back to her people.\"\n    }\n  ]\n}"
+              }
+            ],
+            "role": "model"
+          },
+          "intermediate_data": {
+            "tool_uses": [],
+            "intermediate_responses": []
+          }
+        },
+        {
+          "invocation_id": "fantasy-002",
+          "user_content": {
+            "parts": [
+              {
+                "text": "Keywords: wise owl, ancient library, secret knowledge"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "{\n  \"story\": \"Professor Hoot was the wisest owl in the ancient library, guardian of thousands of mystical books. One evening, a young scholar arrived desperately seeking secret knowledge to heal her ailing grandmother. Professor Hoot led her through towering shelves to a hidden chamber where the most precious wisdom was kept. Together, they discovered an ancient recipe for a healing potion made from moonbeams and starlight. The grateful scholar returned to save her grandmother, and Professor Hoot smiled, knowing knowledge shared is knowledge multiplied.\",\n  \"main_characters\": [\n    {\n      \"name\": \"Professor Hoot\",\n      \"description\": \"Large wise owl with rich brown and cream feathers in intricate patterns, large round amber eyes with gold flecks that seem to hold ancient wisdom, white facial disk with distinctive ear tufts, stands 2 feet tall with impressive wingspan, wears tiny round spectacles on a gold chain, has a dignified posture and thoughtful expression, small leather satchel for carrying important scrolls\"\n    },\n    {\n      \"name\": \"Young Scholar\",\n      \"description\": \"Teenage girl with long dark hair tied back with ribbon, bright green eyes full of determination, wearing simple brown robes with book-filled satchel, carries an old wooden staff with crystal tip, has ink stains on her fingers from writing, earnest expression showing both worry and hope\"\n    }\n  ],\n  \"scenes\": [\n    {\n      \"index\": 1,\n      \"title\": \"The Setup\",\n      \"description\": \"Inside vast ancient library with towering bookshelves reaching to vaulted ceiling, magical books glowing softly\",\n      \"text\": \"Professor Hoot was the wisest owl in the ancient library, guardian of thousands of mystical books. One evening, a young scholar arrived desperately seeking secret knowledge to heal her ailing grandmother.\"\n    },\n    {\n      \"index\": 2,\n      \"title\": \"The Inciting Incident\",\n      \"description\": \"Moving through towering shelves toward a hidden chamber containing the most precious wisdom\",\n      \"text\": \"Professor Hoot led her through towering shelves to a hidden chamber where the most precious wisdom was kept.\"\n    },\n    {\n      \"index\": 3,\n      \"title\": \"The Climax\",\n      \"description\": \"Discovering ancient healing recipe in magical book, moonbeams and starlight ingredients revealed\",\n      \"text\": \"Together, they discovered an ancient recipe for a healing potion made from moonbeams and starlight.\"\n    },\n    {\n      \"index\": 4,\n      \"title\": \"The Resolution\",\n      \"description\": \"Scholar departing with knowledge to save grandmother, owl reflecting on the joy of sharing wisdom\",\n      \"text\": \"The grateful scholar returned to save her grandmother, and Professor Hoot smiled, knowing knowledge shared is knowledge multiplied.\"\n    }\n  ]\n}"
+              }
+            ],
+            "role": "model"
+          },
+          "intermediate_data": {
+            "tool_uses": [],
+            "intermediate_responses": []
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "story_agent",
+        "user_id": "user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "modern_adventure_session",
+      "conversation": [
+        {
+          "invocation_id": "modern-001",
+          "user_content": {
+            "parts": [
+              {
+                "text": "Keywords: space explorer, alien planet, friendly aliens"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "{\n  \"story\": \"Captain Luna adjusted her silver space suit as she stepped onto the purple-soiled alien planet. Her mission was to make peaceful contact with any life forms she might find. Soon, she encountered the Zephyrians - gentle, cloud-like beings who communicated through beautiful color patterns. Though they couldn't speak each other's languages, Luna and the friendly aliens shared stories through drawings in the cosmic sand. When it was time to leave, the Zephyrians gave Luna a glowing crystal as a symbol of their new friendship across the stars.\",\n  \"main_characters\": [\n    {\n      \"name\": \"Captain Luna\",\n      \"description\": \"Young female space explorer with short curly black hair, bright brown eyes full of curiosity, wearing sleek silver space suit with blue trim and transparent helmet, utility belt with various exploration tools, has confident stance but gentle demeanor, about 5'6 tall with athletic build from space training\"\n    },\n    {\n      \"name\": \"Zephyrians\",\n      \"description\": \"Gentle cloud-like alien beings with translucent, shimmering bodies that change colors to show emotions, about 4 feet tall, no fixed shape but tend to be round and fluffy, communicate through swirling color patterns across their bodies, have kind glowing spots that serve as eyes, move by floating gracefully above the ground\"\n    }\n  ],\n  \"scenes\": [\n    {\n      \"index\": 1,\n      \"title\": \"The Setup\",\n      \"description\": \"Stepping onto alien planet with purple soil, strange landscape with unusual rock formations and multiple moons in sky\",\n      \"text\": \"Captain Luna adjusted her silver space suit as she stepped onto the purple-soiled alien planet. Her mission was to make peaceful contact with any life forms she might find.\"\n    },\n    {\n      \"index\": 2,\n      \"title\": \"The Inciting Incident\",\n      \"description\": \"First contact with cloud-like Zephyrian aliens who communicate through beautiful color patterns\",\n      \"text\": \"Soon, she encountered the Zephyrians - gentle, cloud-like beings who communicated through beautiful color patterns.\"\n    },\n    {\n      \"index\": 3,\n      \"title\": \"The Climax\",\n      \"description\": \"Sharing stories through drawings in cosmic sand, overcoming language barriers with creativity\",\n      \"text\": \"Though they couldn't speak each other's languages, Luna and the friendly aliens shared stories through drawings in the cosmic sand.\"\n    },\n    {\n      \"index\": 4,\n      \"title\": \"The Resolution\",\n      \"description\": \"Receiving glowing crystal as friendship gift, establishing peaceful interstellar relationship\",\n      \"text\": \"When it was time to leave, the Zephyrians gave Luna a glowing crystal as a symbol of their new friendship across the stars.\"\n    }\n  ]\n}"
+              }
+            ],
+            "role": "model"
+          },
+          "intermediate_data": {
+            "tool_uses": [],
+            "intermediate_responses": []
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "story_agent",
+        "user_id": "user",
+        "state": {}
+      }
+    },
+    {
+      "eval_id": "edge_case_minimal_keywords",
+      "conversation": [
+        {
+          "invocation_id": "edge-001",
+          "user_content": {
+            "parts": [
+              {
+                "text": "Keywords: tree"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "{\n  \"story\": \"Willow was an ancient tree who had watched over the forest for hundreds of years. One autumn day, she noticed all her leaves were turning golden while other trees remained green. Worried that something was wrong, Willow called out to the wind for help. The wise wind whispered that she was chosen to be the first tree to celebrate the changing seasons each year. From that day forward, Willow proudly wore her golden crown, leading the forest in the beautiful dance of autumn colors.\",\n  \"main_characters\": [\n    {\n      \"name\": \"Willow\",\n      \"description\": \"Majestic ancient tree with thick, gnarled brown trunk covered in moss patches, enormous spreading canopy with drooping branches that sway gracefully, hundreds of oval leaves that shimmer golden in sunlight, deep root system visible at base, has kind knots in trunk that look like gentle eyes and a smiling mouth, stands 50 feet tall with welcoming presence\"\n    }\n  ],\n  \"scenes\": [\n    {\n      \"index\": 1,\n      \"title\": \"The Setup\",\n      \"description\": \"Ancient forest setting with majestic old tree surrounded by other woodland trees\",\n      \"text\": \"Willow was an ancient tree who had watched over the forest for hundreds of years. One autumn day, she noticed all her leaves were turning golden while other trees remained green.\"\n    },\n    {\n      \"index\": 2,\n      \"title\": \"The Inciting Incident\",\n      \"description\": \"Calling out to the wind for help, branches swaying as she communicates her worry\",\n      \"text\": \"Worried that something was wrong, Willow called out to the wind for help.\"\n    },\n    {\n      \"index\": 3,\n      \"title\": \"The Climax\",\n      \"description\": \"Wind bringing wisdom and revelation about being chosen for special seasonal role\",\n      \"text\": \"The wise wind whispered that she was chosen to be the first tree to celebrate the changing seasons each year.\"\n    },\n    {\n      \"index\": 4,\n      \"title\": \"The Resolution\",\n      \"description\": \"Proudly wearing golden leaves like a crown, leading other trees in autumn transformation\",\n      \"text\": \"From that day forward, Willow proudly wore her golden crown, leading the forest in the beautiful dance of autumn colors.\"\n    }\n  ]\n}"
+              }
+            ],
+            "role": "model"
+          },
+          "intermediate_data": {
+            "tool_uses": [],
+            "intermediate_responses": []
+          }
+        }
+      ],
+      "session_input": {
+        "app_name": "story_agent",
+        "user_id": "user",
+        "state": {}
+      }
+    }
+  ]
+}

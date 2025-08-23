@@ -1,0 +1,59 @@
+{
+  "criteria": {
+    "tool_trajectory_avg_score": 1.0,
+    "response_match_score": 0.8
+  },
+  "custom_evaluators": {
+    "image_generation_validator": {
+      "description": "Validates successful image generation and proper tool usage",
+      "required_response_fields": ["success", "images_generated"],
+      "expected_tool_calls": ["generate_image"],
+      "success_response_validation": {
+        "success": true,
+        "images_generated": {"min": 1, "max": 4}
+      }
+    },
+    "error_handling_validator": {
+      "description": "Validates proper error handling for invalid inputs",
+      "error_scenarios": [
+        "empty_input",
+        "invalid_json",
+        "missing_scene_description"
+      ],
+      "expected_error_response": {
+        "success": false,
+        "error": "string"
+      }
+    },
+    "prompt_construction_validator": {
+      "description": "Validates that prompts are properly constructed with style prefix and character details",
+      "required_prompt_elements": [
+        "Children's book cartoon illustration",
+        "bright vibrant colors",
+        "simple shapes",
+        "friendly characters"
+      ]
+    }
+  },
+  "evaluation_notes": {
+    "image_agent_specifics": [
+      "Must call ImagenTool (generate_image) with proper parameters",
+      "Response must be valid JSON with success indicator",
+      "Successful responses should include image data (GCS URL or base64)",
+      "Error responses should have success=false and error message",
+      "Tool calls should include scene description in prompt",
+      "Character descriptions should be integrated into prompt when provided"
+    ],
+    "trajectory_expectations": [
+      "Single tool call to generate_image",
+      "Proper prompt construction from input data",
+      "Error handling for invalid inputs",
+      "Response formatting as JSON string"
+    ],
+    "performance_considerations": [
+      "GCS bucket storage preferred over base64 for token efficiency",
+      "Graceful fallback to base64 when bucket unavailable",
+      "Proper error propagation from ImagenTool"
+    ]
+  }
+}
