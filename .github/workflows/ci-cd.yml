@@ -230,13 +230,13 @@ jobs:
           echo "🔨 Building frontend Docker image..."
           BACKEND_URL="${{ needs.build-and-deploy-backend.outputs.backend-url }}"
           echo "🔗 Using backend URL: $BACKEND_URL"
-          
+
           cd 04b_Manual_Deployment_Done/frontend
-          # Create .env.local with backend URL for build
-          cat > .env.local << EOF
-          NEXT_PUBLIC_BACKEND_URL=${BACKEND_URL}
-          EOF
-          
+
+          # ✅ Ensure NEXT_PUBLIC_BACKEND_URL is injected into the build
+          echo "NEXT_PUBLIC_BACKEND_URL=${BACKEND_URL}" > .env.local
+          cat .env.local
+
           gcloud builds submit \
             --tag ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPO }}/${{ env.FRONTEND_IMAGE_NAME }}:latest \
             --project=${{ env.PROJECT_ID }}
@@ -247,7 +247,7 @@ jobs:
         run: |
           echo "🚀 Deploying frontend to Cloud Run..."
           BACKEND_URL="${{ needs.build-and-deploy-backend.outputs.backend-url }}"
-          
+
           gcloud run deploy ${{ env.FRONTEND_SERVICE_NAME }} \
             --image=${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPO }}/${{ env.FRONTEND_IMAGE_NAME }}:latest \
             --platform=managed \
