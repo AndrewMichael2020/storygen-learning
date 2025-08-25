@@ -84,10 +84,8 @@ class DirectImageAgent:
         """
         # LOCKED STYLE - Same for every single image to ensure consistency
         locked_style = (
-            "Outdoor climbing illustration in a casual realistic style with "
-            "natural earthy colors, clear mountain and rock features, friendly "
-            "climbers in proper gear, simple yet accurate compositions, and "
-            "consistent proportions."
+            "Outdoor mountain climbing illustration set in the Pacific Northwest: granite cliffs, alpine ridgelines, glaciers, conifers, and coastal light; "
+            "casual realistic style, natural earthy colors with bright accents, friendly climbers in proper gear, clear compositions, and consistent proportions."
         )
         
         # Clean up the description
