@@ -62,6 +62,22 @@ jobs:
             cloudbilling.googleapis.com \
             --project=${{ env.PROJECT_ID }}
 
+      - name: Grant runtime permissions to service account
+        run: |
+          echo "🔐 Granting roles to service account for runtime (Vertex + GCS)..."
+          gcloud projects add-iam-policy-binding ${{ env.PROJECT_ID }} \
+            --member="serviceAccount:${{ env.SERVICE_ACCOUNT_EMAIL }}" \
+            --role="roles/aiplatform.user"
+
+          gcloud projects add-iam-policy-binding ${{ env.PROJECT_ID }} \
+            --member="serviceAccount:${{ env.SERVICE_ACCOUNT_EMAIL }}" \
+            --role="roles/storage.objectAdmin"
+
+          # Also ensure bucket-level access (idempotent)
+          if gsutil ls "gs://${{ env.BUCKET_NAME }}" &>/dev/null; then
+            gsutil iam ch serviceAccount:${{ env.SERVICE_ACCOUNT_EMAIL }}:roles/storage.objectAdmin "gs://${{ env.BUCKET_NAME }}"
+          fi
+
       - name: Setup Artifact Registry
         run: |
           echo "🏗️ Setting up Artifact Registry..."
@@ -169,6 +185,7 @@ jobs:
             --image=${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPO }}/${{ env.BACKEND_IMAGE_NAME }}:latest \
             --platform=managed \
             --region=${{ env.GCP_REGION }} \
+            --service-account=${{ env.SERVICE_ACCOUNT_EMAIL }} \
             --allow-unauthenticated \
             --port=8080 \
             --session-affinity \
@@ -229,6 +246,19 @@ jobs:
             exit 1
           fi
           echo "✅ Backend integration test passed"
+
+      - name: Install Python deps for WS smoke test
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y python3-pip
+          pip3 install --no-cache-dir websockets
+
+      - name: WebSocket image smoke test
+        env:
+          BACKEND_URL: ${{ needs.build-and-deploy-backend.outputs.backend-url }}
+        run: |
+          echo "🧪 Running WebSocket image smoke test..."
+          python3 .github/scripts/ws_image_smoke_test.py
 
   build-and-deploy-frontend:
     name: Build and Deploy Frontend
