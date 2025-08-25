@@ -1,7 +1,0 @@
-project_id  = "oprojectgcpapp"
-region      = "us-central1"
-location    = "US"
-bucket_name = "oprojectgcpapp-bucket"
-bucket_prefix = "generated_images/"
-frontend_sa = "genai-frontend-us-central1-sa@oprojectgcpapp.iam.gserviceaccount.com"
-backend_sa  = "genai-backend-us-central1-sa@oprojectgcpapp.iam.gserviceaccount.com"
