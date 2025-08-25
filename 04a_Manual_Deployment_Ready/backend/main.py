@@ -258,18 +258,38 @@ async def run_two_agent_workflow(websocket: WebSocket, user_id: str, keywords: s
                     character_descriptions[char_name] = char_desc
             logger.info(f"📚 Found {len(character_descriptions)} main character(s): {', '.join(character_descriptions.keys())}")
         
-        for scene in story_data["scenes"]:
-            scene_index = scene.get("index", 1) - 1  # Convert to 0-based index
-            scene_description = scene.get("description", "")
+        for i, scene in enumerate(story_data["scenes"]):
+            # Prefer explicit index (1-based from agent), otherwise fallback to enumerate
+            try:
+                scene_index = int(scene.get("index")) - 1 if "index" in scene else i
+            except Exception:
+                scene_index = i
+            if scene_index < 0:
+                scene_index = 0
+            # Use scene text if available for a richer visual prompt; fallback to description
+            scene_description = scene.get("text") or scene.get("description", "")
             
             try:
                 logger.info(f"🖼️ Generating image for scene {scene_index + 1}: {scene.get('title', 'Unknown')}")
                 
                 # Use DirectImageAgent to generate image with character descriptions
-                result_data = await image_agent.generate_image_from_description(
-                    scene_description,
-                    character_descriptions
-                )
+                # Add a simple retry to improve reliability under transient errors/quota hiccups
+                attempts = 0
+                last_error: Exception | None = None
+                result_data = {"success": False}
+                while attempts < 2:
+                    attempts += 1
+                    try:
+                        result_data = await image_agent.generate_image_from_description(
+                            scene_description,
+                            character_descriptions
+                        )
+                        if result_data.get("success"):
+                            break
+                    except Exception as e:
+                        last_error = e
+                    if attempts < 2:
+                        await asyncio.sleep(1.5)
                 
                 if result_data.get("success") and result_data.get("images"):
                     for img_data in result_data["images"]:
@@ -295,7 +315,7 @@ async def run_two_agent_workflow(websocket: WebSocket, user_id: str, keywords: s
                         }))
                         logger.info(f"📤 Sent image for scene {scene_index + 1} to frontend")
                 else:
-                    raise Exception(f"Image generation failed: {result_data.get('error', 'Unknown error')}")
+                    raise Exception(f"Image generation failed: {result_data.get('error', str(last_error) if 'last_error' in locals() else 'Unknown error')}")
                     
             except Exception as e:
                 logger.error(f"Image generation failed for scene {scene_index + 1}: {e}")

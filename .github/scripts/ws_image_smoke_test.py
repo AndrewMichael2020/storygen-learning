@@ -33,7 +33,8 @@ async def run_test():
 
     timeout_seconds = int(os.environ.get("WS_SMOKE_TIMEOUT", "90"))
     started = time.time()
-    got_image = False
+    expected = int(os.environ.get("WS_EXPECTED_IMAGES", "1"))
+    got_images = 0
     received_types = []
 
     async with websockets.connect(ws_url, ping_interval=20, ping_timeout=20) as ws:
@@ -55,9 +56,10 @@ async def run_test():
             if mtype:
                 received_types.append(mtype)
             if mtype == "image_generated":
-                got_image = True
-                print("✅ Received image_generated event")
-                break
+                got_images += 1
+                print(f"✅ Received image_generated event ({got_images}/{expected})")
+                if got_images >= expected:
+                    break
             if mtype == "error":
                 print(f"❌ Backend error: {data.get('message')}", file=sys.stderr)
                 break
@@ -65,9 +67,9 @@ async def run_test():
                 # finished without image
                 break
 
-    if got_image:
+    if got_images >= expected:
         return 0
-    print(f"❌ Did not receive image_generated within {timeout_seconds}s. Seen events: {received_types}", file=sys.stderr)
+    print(f"❌ Expected {expected} image_generated events, got {got_images} within {timeout_seconds}s. Seen events: {received_types}", file=sys.stderr)
     return 1
 
 
