@@ -1,6 +1,7 @@
 """
 Direct Image Agent that bypasses ADK function calling and uses ImagenTool directly
 """
+import os
 import json
 import re
 from typing import Optional, Dict, Any
@@ -13,7 +14,7 @@ class DirectImageFunction:
     without relying on ADK's function calling mechanism.
     """
     
-    def __init__(self, project_id: str = None):
+    def __init__(self, project_id: str = None, location: str | None = None):
         """
         Initialize the DirectImageFunction with ImagenTool
         
@@ -21,11 +22,17 @@ class DirectImageFunction:
             project_id: Google Cloud Project ID for image generation
         """
         self.project_id = project_id
+        self.location = (
+            location
+            or os.getenv("GOOGLE_CLOUD_REGION")
+            or os.getenv("GOOGLE_CLOUD_LOCATION")
+            or "us-central1"
+        )
         self.imagen_tool = None
         
         if project_id:
             try:
-                self.imagen_tool = ImagenTool(project_id=project_id)
+                self.imagen_tool = ImagenTool(project_id=project_id, location=self.location)
                 print("✅ DirectImageFunction initialized with ImagenTool")
             except Exception as e:
                 print(f"⚠️ Warning: Could not initialize ImagenTool: {e}")

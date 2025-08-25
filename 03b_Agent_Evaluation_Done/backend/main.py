@@ -22,6 +22,12 @@ from story_agent.story_image_function import DirectImageFunction
 # Load environment variables
 load_dotenv()
 
+# Normalize region/location envs for Vertex AI
+if os.getenv("GOOGLE_GENAI_USE_VERTEXAI", "FALSE").upper() == "TRUE":
+    region = os.getenv("GOOGLE_CLOUD_REGION") or os.getenv("GCP_REGION")
+    if region and not os.getenv("GOOGLE_CLOUD_LOCATION"):
+        os.environ["GOOGLE_CLOUD_LOCATION"] = region
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

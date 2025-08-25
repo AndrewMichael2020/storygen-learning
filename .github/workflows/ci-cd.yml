@@ -177,6 +177,7 @@ jobs:
             --set-env-vars="GENMEDIA_BUCKET=${{ env.BUCKET_NAME }}" \
             --set-env-vars="GOOGLE_GENAI_USE_VERTEXAI=TRUE" \
             --set-env-vars="GOOGLE_CLOUD_REGION=${{ env.GCP_REGION }}" \
+            --set-env-vars="GOOGLE_CLOUD_LOCATION=${{ env.GCP_REGION }}" \
             --set-secrets="GOOGLE_API_KEY=${{ env.SECRET_MANAGER }}:latest" \
             --memory=${{ env.BACKEND_MEMORY }} \
             --cpu=${{ env.BACKEND_CPU }} \
@@ -255,6 +256,7 @@ jobs:
             --allow-unauthenticated \
             --port=3000 \
             --set-env-vars="NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL" \
+            --set-env-vars="GOOGLE_CLOUD_LOCATION=${{ env.GCP_REGION }}" \
             --memory=${{ env.FRONTEND_MEMORY }} \
             --cpu=${{ env.FRONTEND_CPU }} \
             --min-instances=${{ env.MIN_INSTANCES }} \

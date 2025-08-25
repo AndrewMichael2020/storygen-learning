@@ -21,14 +21,15 @@ class ImagenTool(BaseTool):
     Automatically stores images in GCS bucket to avoid MCP token payload issues.
     """
     
-    def __init__(self, project_id: str = None, location: str = "us-central1"):
+    def __init__(self, project_id: str = None, location: str = None):
         super().__init__(
             name="generate_image",
             description="Generate cartoon-style images (bold outlines, vibrant flat colors, minimal background) using Google Vertex AI Imagen with automatic bucket storage"
         )
         
-        self._project_id = project_id or os.getenv("GOOGLE_CLOUD_PROJECT") or os.getenv("GOOGLE_CLOUD_PROJECT_ID")
-        self._location = location
+    self._project_id = project_id or os.getenv("GOOGLE_CLOUD_PROJECT") or os.getenv("GOOGLE_CLOUD_PROJECT_ID")
+    # Prefer GOOGLE_CLOUD_REGION (our standard), fallback to GOOGLE_CLOUD_LOCATION (google-genai naming), then default
+    self._location = location or os.getenv("GOOGLE_CLOUD_REGION") or os.getenv("GOOGLE_CLOUD_LOCATION") or "us-central1"
         self._bucket_name = os.getenv("GENMEDIA_BUCKET")
         
         if not self._project_id:
@@ -37,8 +38,8 @@ class ImagenTool(BaseTool):
         if not self._bucket_name:
             print("⚠️  Warning: GENMEDIA_BUCKET not set. Images will be returned as base64 payloads which may cause token issues.")
         
-        # Initialize Vertex AI
-        vertexai.init(project=self._project_id, location=self._location)
+    # Initialize Vertex AI
+    vertexai.init(project=self._project_id, location=self._location)
         self._model = ImageGenerationModel.from_pretrained("imagegeneration@006")
         
         # Initialize GCS client if bucket is configured
