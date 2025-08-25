@@ -282,7 +282,7 @@ jobs:
 
       - name: WebSocket image smoke test
         env:
-          BACKEND_URL: ${{ needs.build-and-deploy-backend.outputs.backend-url }}
+          BACKEND_URL: ${{ steps.deploy-backend.outputs.backend-url }}
         run: |
           echo "🧪 Running WebSocket image smoke test..."
           python3 .github/scripts/ws_image_smoke_test.py
