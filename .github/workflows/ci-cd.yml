@@ -63,19 +63,22 @@ jobs:
             --project=${{ env.PROJECT_ID }}
 
       - name: Grant runtime permissions to service account
+        continue-on-error: true
         run: |
           echo "🔐 Granting roles to service account for runtime (Vertex + GCS)..."
+          echo "ℹ️ Running as: $(gcloud config get-value account)"
+          echo "ℹ️ If this step fails with Policy update access denied, grant roles/resourcemanager.projectIamAdmin to this account or pre-provision the runtime SA roles."
           gcloud projects add-iam-policy-binding ${{ env.PROJECT_ID }} \
             --member="serviceAccount:${{ env.SERVICE_ACCOUNT_EMAIL }}" \
-            --role="roles/aiplatform.user"
+            --role="roles/aiplatform.user" || echo "⚠️ Failed to grant roles/aiplatform.user; continuing"
 
           gcloud projects add-iam-policy-binding ${{ env.PROJECT_ID }} \
             --member="serviceAccount:${{ env.SERVICE_ACCOUNT_EMAIL }}" \
-            --role="roles/storage.objectAdmin"
+            --role="roles/storage.objectAdmin" || echo "⚠️ Failed to grant roles/storage.objectAdmin; continuing"
 
           # Also ensure bucket-level access (idempotent)
           if gsutil ls "gs://${{ env.BUCKET_NAME }}" &>/dev/null; then
-            gsutil iam ch serviceAccount:${{ env.SERVICE_ACCOUNT_EMAIL }}:roles/storage.objectAdmin "gs://${{ env.BUCKET_NAME }}"
+            gsutil iam ch serviceAccount:${{ env.SERVICE_ACCOUNT_EMAIL }}:roles/storage.objectAdmin "gs://${{ env.BUCKET_NAME }}" || echo "⚠️ Bucket IAM change failed; continuing"
           fi
 
       - name: Setup Artifact Registry
