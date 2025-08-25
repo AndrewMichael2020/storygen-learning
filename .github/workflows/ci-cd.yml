@@ -196,6 +196,40 @@ jobs:
           echo "🔗 Backend URL: $BACKEND_URL"
           echo "backend-url=$BACKEND_URL" >> $GITHUB_OUTPUT
 
+      - name: Smoke test backend
+        run: |
+          echo "🏥 Checking backend health..."
+          BACKEND_URL=$(gcloud run services describe ${{ env.BACKEND_SERVICE_NAME }} \
+            --platform=managed \
+            --region=${{ env.GCP_REGION }} \
+            --format="value(status.url)" \
+            --project=${{ env.PROJECT_ID }})
+
+          echo "Testing: $BACKEND_URL/health"
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$BACKEND_URL/health" || echo "000")
+          if [ "$STATUS" != "200" ]; then
+            echo "❌ Backend health check failed (HTTP $STATUS)"
+            exit 1
+          fi
+          echo "✅ Backend is healthy"
+
+      - name: Integration test backend (HTTP)
+        run: |
+          echo "🔌 Running simple integration test..."
+          BACKEND_URL=$(gcloud run services describe ${{ env.BACKEND_SERVICE_NAME }} \
+            --platform=managed \
+            --region=${{ env.GCP_REGION }} \
+            --format="value(status.url)" \
+            --project=${{ env.PROJECT_ID }})
+
+          # The primary API is WebSocket-based; use the root HTTP endpoint as a minimal integration smoke test
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" "$BACKEND_URL/" || echo "000")
+          if [ "$RESPONSE" != "200" ]; then
+            echo "❌ Backend integration test failed (HTTP $RESPONSE)"
+            exit 1
+          fi
+          echo "✅ Backend integration test passed"
+
   build-and-deploy-frontend:
     name: Build and Deploy Frontend
     runs-on: ubuntu-latest
