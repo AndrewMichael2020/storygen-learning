@@ -154,7 +154,7 @@ jobs:
       - name: Build and push backend Docker image
         run: |
           echo "🔨 Building backend Docker image..."
-          cd 04b_Manual_Deployment_Done/backend
+          cd 04b_Manual_Deployment_Ready/backend
           gcloud builds submit \
             --tag ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPO }}/${{ env.BACKEND_IMAGE_NAME }}:latest \
             --project=${{ env.PROJECT_ID }}
@@ -231,7 +231,7 @@ jobs:
           BACKEND_URL="${{ needs.build-and-deploy-backend.outputs.backend-url }}"
           echo "🔗 Using backend URL: $BACKEND_URL"
           
-          cd 04b_Manual_Deployment_Done/frontend
+          cd 04b_Manual_Deployment_Ready/frontend
           # Create .env.local with backend URL for build
           cat > .env.local << EOF
           NEXT_PUBLIC_BACKEND_URL=${BACKEND_URL}
