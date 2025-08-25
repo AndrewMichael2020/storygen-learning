@@ -19,5 +19,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Command to run the application
-# Use exec form so signals are forwarded, and add basic logging
-CMD ["gunicorn", "main:app", "--bind", ":${PORT}", "--workers", "1", "--worker-class", "uvicorn.workers.UvicornWorker", "--threads", "8", "--log-level", "info", "--access-logfile", "-"]
+# Use shell form so $PORT expands on Cloud Run; keep logging to stdout
+CMD exec gunicorn --bind :$PORT --workers 1 --worker-class uvicorn.workers.UvicornWorker --threads 8 --log-level info --access-logfile - main:app
