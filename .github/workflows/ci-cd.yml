@@ -284,6 +284,7 @@ jobs:
         env:
           BACKEND_URL: ${{ steps.deploy-backend.outputs.backend-url }}
           WS_EXPECTED_IMAGES: "4"
+          WS_MAX_SIZE_BYTES: "0" # unlimited to allow large base64 images (2-7 MB)
         run: |
           echo "🧪 Running WebSocket image smoke test..."
           python3 .github/scripts/ws_image_smoke_test.py

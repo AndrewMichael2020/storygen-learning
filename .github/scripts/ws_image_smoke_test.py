@@ -32,12 +32,23 @@ async def run_test():
     print(f"Connecting to {ws_url}")
 
     timeout_seconds = int(os.environ.get("WS_SMOKE_TIMEOUT", "90"))
+    # Allow larger frames (e.g., base64 images) by increasing or disabling max_size
+    max_size_env = os.environ.get("WS_MAX_SIZE_BYTES", "10485760")  # default 10 MiB
+    if str(max_size_env).strip().lower() in ("0", "none", "unlimited"):
+        max_size = None
+    else:
+        try:
+            max_size = int(max_size_env)
+        except ValueError:
+            max_size = 10 * 1024 * 1024  # fallback 10 MiB
+    ping_interval = float(os.environ.get("WS_PING_INTERVAL", "20"))
+    ping_timeout = float(os.environ.get("WS_PING_TIMEOUT", "20"))
     started = time.time()
     expected = int(os.environ.get("WS_EXPECTED_IMAGES", "1"))
     got_images = 0
     received_types = []
 
-    async with websockets.connect(ws_url, ping_interval=20, ping_timeout=20) as ws:
+    async with websockets.connect(ws_url, ping_interval=ping_interval, ping_timeout=ping_timeout, max_size=max_size) as ws:
         # confirm handshake
         # send generate request
         payload = {"type": "generate_story", "data": "Squamish demo"}
