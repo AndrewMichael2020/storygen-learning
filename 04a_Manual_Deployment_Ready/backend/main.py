@@ -3,24 +3,31 @@ import os
 import json
 import asyncio
 import logging
+from typing import Optional
 from pathlib import Path
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+except Exception:
+    def load_dotenv(*args, **kwargs):
+        return False
 
 from google.genai.types import Content, Part
 from google.adk.runners import InMemoryRunner
-from google.adk.sessions.in_memory_session_service import InMemorySessionService
+# Note: Avoid importing optional session implementations that may change across ADK versions
+# from google.adk.sessions.in_memory_session_service import InMemorySessionService
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from story_agent.story_text_agent import story_agent
 from story_agent.story_image_agent import DirectImageAgent
 
-# Load environment variables
-load_dotenv()
+# Load environment variables if python-dotenv is available
+try:
+    load_dotenv()
+except Exception:
+    pass
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -70,18 +77,27 @@ if story_agent:
 else:
     logger.error("❌ StoryAgent is None! Check story_text_agent.py import")
 
-# Initialize direct image agent
+# Lazily initialize DirectImageAgent on first use to avoid slowing container startup
 direct_image_agent = None
-if project_id:
+
+def get_image_agent() -> Optional[DirectImageAgent]:
+    global direct_image_agent
+    if direct_image_agent is not None:
+        return direct_image_agent
+
+    if not project_id:
+        logger.info("💡 To enable image generation, set GOOGLE_CLOUD_PROJECT_ID in your environment")
+        return None
+
     try:
-        logger.info(f"🎨 Initializing DirectImageAgent with project: {project_id}")
+        logger.info(f"🎨 Lazy-initializing DirectImageAgent with project: {project_id}")
         direct_image_agent = DirectImageAgent(project_id=project_id)
-        logger.info("✅ Architecture initialized: StoryAgent + DirectImageAgent")
+        logger.info("✅ DirectImageAgent ready")
+        return direct_image_agent
     except Exception as e:
         logger.warning(f"⚠️ Could not initialize DirectImageAgent: {e}")
         logger.info("📖 Story generation will work, but images will be disabled")
-else:
-    logger.info("💡 To enable image generation, set GOOGLE_CLOUD_PROJECT_ID in your .env file")
+        return None
 
 
 async def run_two_agent_workflow(websocket: WebSocket, user_id: str, keywords: str):
@@ -223,7 +239,13 @@ async def run_two_agent_workflow(websocket: WebSocket, user_id: str, keywords: s
         return
 
     # Step 2: Generate images using DirectImageAgent
-    if story_data and direct_image_agent and story_data.get("scenes"):
+    if story_data and story_data.get("scenes"):
+        # Ensure image agent is ready (lazy init)
+        image_agent = get_image_agent()
+        if not image_agent:
+            logger.warning("⚠️ DirectImageAgent not available, skipping image generation")
+            await websocket.send_text(json.dumps({"type": "turn_complete", "turn_complete": True}))
+            return
         logger.info("🎨 Starting image generation with DirectImageAgent...")
         
         # Extract character descriptions from story data
@@ -244,7 +266,7 @@ async def run_two_agent_workflow(websocket: WebSocket, user_id: str, keywords: s
                 logger.info(f"🖼️ Generating image for scene {scene_index + 1}: {scene.get('title', 'Unknown')}")
                 
                 # Use DirectImageAgent to generate image with character descriptions
-                result_data = await direct_image_agent.generate_image_from_description(
+                result_data = await image_agent.generate_image_from_description(
                     scene_description,
                     character_descriptions
                 )
@@ -298,9 +320,7 @@ async def run_two_agent_workflow(websocket: WebSocket, user_id: str, keywords: s
                 
         logger.info("🎨 All image generation completed")
     else:
-        if not direct_image_agent:
-            logger.warning("⚠️ DirectImageAgent not available, skipping image generation")
-        elif not story_data.get("scenes"):
+        if not story_data.get("scenes"):
             logger.warning("⚠️ No scenes found in story data, skipping image generation")
     
     # Send completion notification

@@ -181,6 +181,7 @@ jobs:
         run: |
           echo "📦 Deploying backend to Cloud Run..."
           
+          set +e
           gcloud run deploy ${{ env.BACKEND_SERVICE_NAME }} \
             --image=${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPO }}/${{ env.BACKEND_IMAGE_NAME }}:latest \
             --platform=managed \
@@ -202,6 +203,29 @@ jobs:
             --min-instances=${{ env.MIN_INSTANCES }} \
             --max-instances=${{ env.MAX_INSTANCES }} \
             --project=${{ env.PROJECT_ID }}
+          DEPLOY_EXIT=$?
+          set -e
+          if [ $DEPLOY_EXIT -ne 0 ]; then
+            echo "❌ Cloud Run deploy failed. Attempting to fetch latest revision logs..."
+            LATEST_REV=$(gcloud run services describe ${{ env.BACKEND_SERVICE_NAME }} \
+              --platform=managed \
+              --region=${{ env.GCP_REGION }} \
+              --format='value(status.latestCreatedRevisionName)' \
+              --project=${{ env.PROJECT_ID }} || true)
+            if [ -n "$LATEST_REV" ]; then
+              echo "🔎 Latest created revision: $LATEST_REV"
+              echo "--- Recent logs for $LATEST_REV ---"
+              gcloud logging read \
+                "resource.type=cloud_run_revision AND resource.labels.service_name='${{ env.BACKEND_SERVICE_NAME }}' AND resource.labels.revision_name='$LATEST_REV'" \
+                --project=${{ env.PROJECT_ID }} \
+                --limit=200 \
+                --format='value(textPayload)' || true
+              echo "--- End logs ---"
+            else
+              echo "⚠️ Could not determine latest revision name"
+            fi
+            exit $DEPLOY_EXIT
+          fi
 
           BACKEND_URL=$(gcloud run services describe ${{ env.BACKEND_SERVICE_NAME }} \
             --platform=managed \
