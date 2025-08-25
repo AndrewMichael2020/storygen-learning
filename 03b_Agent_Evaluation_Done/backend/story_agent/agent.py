@@ -9,7 +9,8 @@ print("📖 Story agent initialized (images handled manually in main.py)")
 
 # Story generation agent using ADK
 root_agent = LlmAgent(
-    model="gemini-2.5-flash",  # Using gemini-1.5-flash which supports streaming
+  # Configurable via GEMINI_MODEL; default to gemini-2.5-flash
+  model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
     name="story_agent",
     description="Generates creative short stories and accompanying visual keyframes based on user-provided keywords and themes.",
     instruction="""You are a master storyteller for a children's storybook app. Your goal is to create a structured story with exactly four distinct scenes, providing both the narrative text and structured scene data for image generation.

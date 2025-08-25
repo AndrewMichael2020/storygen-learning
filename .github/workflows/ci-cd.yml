@@ -178,6 +178,7 @@ jobs:
             --set-env-vars="GOOGLE_GENAI_USE_VERTEXAI=TRUE" \
             --set-env-vars="GOOGLE_CLOUD_REGION=${{ env.GCP_REGION }}" \
             --set-env-vars="GOOGLE_CLOUD_LOCATION=${{ env.GCP_REGION }}" \
+            --set-env-vars="GEMINI_MODEL=gemini-2.5-flash" \
             --set-secrets="GOOGLE_API_KEY=${{ env.SECRET_MANAGER }}:latest" \
             --memory=${{ env.BACKEND_MEMORY }} \
             --cpu=${{ env.BACKEND_CPU }} \

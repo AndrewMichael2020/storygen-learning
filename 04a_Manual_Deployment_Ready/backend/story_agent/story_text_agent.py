@@ -17,7 +17,8 @@ print(f"🎯 Using Vertex AI: {use_vertexai}")
 # Story generation agent using ADK
 # The ADK will automatically use GOOGLE_API_KEY environment variable when available
 story_agent = LlmAgent(
-    model="gemini-1.5-flash",  # Using gemini-1.5-flash which supports streaming
+  # Prefer env var, default to latest flash model
+  model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
     name="story_agent", 
     description="Generates concise climbing and alpine recommendations with actionable segments for BC and Washington based on user-provided keywords and themes.",
     tools=tools
